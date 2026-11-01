@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panic Protocol – Crop Protection Console (Simulation Mode)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">PP</div>
+            <div>
+                <div class="brand-name">Panic Protocol</div>
+                <div class="brand-sub">Crop Protection</div>
+            </div>
+        </div>
+        <nav class="nav">
+            <a href="#status">System Status</a>
+            <a href="#camera-feed">Live Camera Feed</a>
+            <a href="#simulation">Simulation Control</a>
+            <a href="#deterrent">Live Deterrent</a>
+            <a href="#history">Event History</a>
+        </nav>
+        <div class="sidebar-note">
+            SIMULATION MODE<br>
+            No physical hardware is connected. Every device is [SIMULATED].
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <h1>Panic Protocol – Crop Protection Console (Simulation Mode)</h1>
+            <span class="badge badge-sim">ALL HARDWARE [SIMULATED]</span>
+        </header>
+
+        <main class="content">
+
+            <!-- 1. System Status Cards -->
+            <section id="status">
+                <h2>System Status</h2>
+                <div class="cards">
+                    <div class="card level-idle" id="card-pir">
+                        <div class="card-title">Motion Sensor (PIR) [SIMULATED]</div>
+                        <div class="card-value" id="pir-value">Loading...</div>
+                        <div class="card-detail" id="pir-detail"></div>
+                    </div>
+                    <div class="card level-idle" id="card-camera">
+                        <div class="card-title">Camera (AI Edge) [SIMULATED]</div>
+                        <div class="card-value" id="camera-value">Loading...</div>
+                        <div class="card-detail" id="camera-detail"></div>
+                    </div>
+                    <div class="card level-idle" id="card-esp32">
+                        <div class="card-title">ESP32 Controller Link [SIMULATED]</div>
+                        <div class="card-value" id="esp32-value">Loading...</div>
+                        <div class="card-detail" id="esp32-detail"></div>
+                    </div>
+                    <div class="card level-idle" id="card-deterrent">
+                        <div class="card-title">Active Deterrent [SIMULATED]</div>
+                        <div class="card-value" id="deterrent-value">Loading...</div>
+                        <div class="card-detail" id="deterrent-detail"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Live Simulated AI Camera Feed Box -->
+            <section id="camera-feed">
+                <h2>Live AI Edge Camera Feed [SIMULATED]</h2>
+                <div class="camera-feed-card">
+                    <div class="camera-header">
+                        <div class="camera-title"><span class="rec-dot"></span> LIVE AI EDGE FEED [CAM-01]</div>
+                        <div class="camera-specs">YOLOv8-Nano (Simulated) | FPS: 30</div>
+                    </div>
+                    <div class="camera-screen" id="cameraScreen">
+                        <div class="scan-line"></div>
+
+                        <!-- YOLO Dynamic Bounding Box -->
+                        <div class="ai-bounding-box" id="aiBox" style="display: none;">
+                            <div class="ai-box-label" id="aiBoxLabel">Wild Boar: 94.6%</div>
+                            <div class="animal-silhouette" id="animalSilhouette">🐗</div>
+                        </div>
+
+                        <!-- Default Status Text -->
+                        <div class="camera-status-msg" id="cameraStatusMsg">
+                            FIELD PERIMETER CLEAR - SCANNING
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Simulation Control Panel -->
+            <section id="simulation">
+                <h2>Simulation Control Panel</h2>
+                <div class="panel">
+                    <div class="button-row">
+                        <button class="btn btn-danger" data-sim="boar">Trigger Wild Boar Intrusion</button>
+                        <button class="btn btn-amber" data-sim="other">Trigger Other Movement (Non-Target / Stray Animal)</button>
+                        <button class="btn btn-green" data-sim="clear">Reset / Clear Field (No Animal)</button>
+                    </div>
+                    <div class="counter-row">
+                        <div class="counter">
+                            <span class="counter-label">Consecutive Wild Boar Visits</span>
+                            <span class="counter-number" id="visit-count">0</span>
+                        </div>
+                        <div class="message" id="message">Ready. Press a simulation button.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Live Deterrent Output -->
+            <section id="deterrent">
+                <h2>Live Deterrent Output [SIMULATED]</h2>
+                <div class="panel dark-panel">
+                    <div class="deterrent-grid">
+                        <div class="wave-box">
+                            <div class="mini-title">Simulated Audio Waveform</div>
+                            <canvas id="wave" height="150"></canvas>
+                            <div class="freq-readout" id="freq-readout">0 kHz - Silent</div>
+                        </div>
+                        <div class="led-box">
+                            <div class="mini-title">Strobe / White LED [SIMULATED]</div>
+                            <div class="led" id="led"></div>
+                            <div class="led-label" id="led-label">LED OFF</div>
+                            <div class="mini-title buzzer-title">Ultrasonic Buzzer [SIMULATED]</div>
+                            <div class="buzzer-state" id="buzzer-state">OFF</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Event History -->
+            <section id="history">
+                <h2>Event History</h2>
+                <div class="panel">
+                    <div class="button-row">
+                        <a class="btn btn-green" href="/api/export">Export History (CSV)</a>
+                        <button class="btn btn-outline" id="reset-all">Reset Simulation &amp; Data</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Detected Entity</th>
+                                    <th>Visit Count</th>
+                                    <th>Deterrent Action Taken</th>
+                                    <th>Trigger Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="events-body">
+                                <tr><td colspan="6" class="empty">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
